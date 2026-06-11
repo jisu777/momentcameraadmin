@@ -1,0 +1,305 @@
+:root {
+  color-scheme: dark;
+  --bg: #090b10;
+  --panel: #121722;
+  --line: #263142;
+  --text: #eef3ff;
+  --muted: #9ba9bf;
+  --accent: #4fc3a1;
+  --danger: #ff6b6b;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+.shell {
+  width: min(1180px, calc(100% - 32px));
+  margin: 0 auto;
+  padding: 32px 0;
+}
+
+.home {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+}
+
+.hero {
+  width: min(720px, 100%);
+}
+
+.hero h1 {
+  margin: 8px 0 16px;
+  font-size: 56px;
+  line-height: 1;
+}
+
+.hero p {
+  color: var(--muted);
+  font-size: 18px;
+  line-height: 1.7;
+}
+
+.eyebrow {
+  color: var(--accent) !important;
+  font-size: 13px !important;
+  letter-spacing: 0 !important;
+  text-transform: uppercase;
+}
+
+.primary,
+.secondary,
+.danger,
+.ghost {
+  border: 1px solid transparent;
+  border-radius: 8px;
+  padding: 11px 14px;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.primary {
+  background: var(--accent);
+  color: #04110d;
+  font-weight: 700;
+}
+
+.secondary {
+  background: #1b2330;
+  color: var(--text);
+  border-color: var(--line);
+}
+
+.danger {
+  background: rgba(255, 107, 107, 0.12);
+  color: #ffd0d0;
+  border-color: rgba(255, 107, 107, 0.35);
+}
+
+.ghost {
+  background: transparent;
+  color: var(--muted);
+  border-color: var(--line);
+}
+
+.topbar {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+.topbar h1 {
+  margin: 0;
+  font-size: 32px;
+}
+
+.topbar p {
+  margin: 8px 0 0;
+  color: var(--muted);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 360px 1fr;
+  gap: 18px;
+  align-items: start;
+}
+
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 18px;
+}
+
+.panel h2 {
+  margin: 0 0 16px;
+  font-size: 18px;
+}
+
+.field {
+  display: grid;
+  gap: 7px;
+  margin-bottom: 13px;
+}
+
+.field span {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+input,
+textarea,
+select {
+  width: 100%;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  background: #0b1018;
+  color: var(--text);
+  padding: 11px 12px;
+  outline: none;
+}
+
+textarea {
+  min-height: 84px;
+  resize: vertical;
+}
+
+.row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.row > * {
+  flex: 1;
+}
+
+.message {
+  margin-top: 12px;
+  color: var(--accent);
+  white-space: pre-wrap;
+}
+
+.error {
+  color: var(--danger);
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.stat {
+  background: #0b1018;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 14px;
+}
+
+.stat strong {
+  display: block;
+  font-size: 24px;
+}
+
+.stat span {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.toolbar {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.toolbar input,
+.toolbar select {
+  max-width: 260px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  padding: 11px 9px;
+  border-bottom: 1px solid var(--line);
+  text-align: left;
+  vertical-align: top;
+  font-size: 13px;
+}
+
+th {
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.code {
+  font-family: Consolas, "Courier New", monospace;
+  font-size: 14px;
+  color: #d6fff2;
+  white-space: nowrap;
+}
+
+.badge {
+  display: inline-block;
+  border-radius: 999px;
+  padding: 4px 8px;
+  background: #202b3b;
+  color: #c7d3e4;
+  font-size: 12px;
+}
+
+.badge.active {
+  background: rgba(79, 195, 161, 0.12);
+  color: #aaf5de;
+}
+
+.badge.revoked {
+  background: rgba(255, 107, 107, 0.12);
+  color: #ffd0d0;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.actions button {
+  padding: 7px 9px;
+  font-size: 12px;
+}
+
+.login {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+}
+
+.login .panel {
+  width: min(420px, 100%);
+}
+
+@media (max-width: 920px) {
+  .grid,
+  .stats {
+    grid-template-columns: 1fr;
+  }
+
+  .topbar,
+  .toolbar {
+    flex-direction: column;
+  }
+
+  table {
+    display: block;
+    overflow-x: auto;
+  }
+}
