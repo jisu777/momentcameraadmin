@@ -4,3 +4,33 @@
 
 [[plugins]]
   package = "@netlify/plugin-nextjs"
+
+[[redirects]]
+  from = "/api/licenses/generate"
+  to = "/.netlify/functions/licenses-generate"
+  status = 200
+
+[[redirects]]
+  from = "/api/licenses/list"
+  to = "/.netlify/functions/licenses-list"
+  status = 200
+
+[[redirects]]
+  from = "/api/licenses/activate"
+  to = "/.netlify/functions/licenses-activate"
+  status = 200
+
+[[redirects]]
+  from = "/api/licenses/revoke"
+  to = "/.netlify/functions/licenses-revoke"
+  status = 200
+
+[[redirects]]
+  from = "/api/licenses/reset-device"
+  to = "/.netlify/functions/licenses-reset-device"
+  status = 200
+
+[[redirects]]
+  from = "/api/licenses/issue"
+  to = "/.netlify/functions/licenses-issue"
+  status = 200

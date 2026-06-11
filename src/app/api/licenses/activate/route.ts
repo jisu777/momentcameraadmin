@@ -4,6 +4,7 @@ import { getLicenseByCode, updateLicense } from "@/lib/license-store";
 import type { PublicActivation } from "@/lib/license-types";
 
 export async function POST(request: NextRequest) {
+  try {
   const body = await request.json().catch(() => ({}));
   const normalizedCode = normalizeCode(String(body.code ?? ""));
   const deviceId = String(body.deviceId ?? "").trim();
@@ -63,6 +64,12 @@ export async function POST(request: NextRequest) {
     expiresAt: updated?.expiresAt ?? calculatedExpiresAt,
     issuer: process.env.LICENSE_ISSUER ?? "Moment Camera"
   });
+  } catch (error) {
+    return NextResponse.json<PublicActivation>(
+      { ok: false, reason: error instanceof Error ? error.message : "라이선스 확인에 실패했습니다." },
+      { status: 500 }
+    );
+  }
 }
 
 function addDays(date: Date, days: number) {

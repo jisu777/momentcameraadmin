@@ -6,6 +6,7 @@ import type { LicenseCode } from "@/lib/license-types";
 type ApiResult = {
   ok: boolean;
   error?: string;
+  reason?: string;
   licenses?: LicenseCode[];
   count?: number;
 };
@@ -48,9 +49,17 @@ export default function AdminPanel() {
         ...(options.headers ?? {})
       }
     });
-    const data = await response.json() as ApiResult;
+
+    const text = await response.text();
+    let data: ApiResult;
+    try {
+      data = text ? JSON.parse(text) as ApiResult : { ok: false, error: "서버 응답이 비어 있습니다. Netlify Functions 배포 상태를 확인해야 합니다." };
+    } catch {
+      data = { ok: false, error: text || "서버 응답을 읽지 못했습니다." };
+    }
+
     if (!response.ok || !data.ok) {
-      throw new Error(data.error ?? "요청에 실패했습니다.");
+      throw new Error(data.error ?? data.reason ?? "요청에 실패했습니다.");
     }
     return data;
   }
@@ -173,7 +182,7 @@ export default function AdminPanel() {
           <button className="primary" onClick={load} disabled={busy || !password}>
             관리자 페이지 열기
           </button>
-          {message && <p className={message.includes("올바르지") || message.includes("실패") ? "message error" : "message"}>{message}</p>}
+          {message && <p className={message.includes("올바르지") || message.includes("실패") || message.includes("필요") ? "message error" : "message"}>{message}</p>}
         </section>
       </main>
     );
@@ -229,7 +238,7 @@ export default function AdminPanel() {
             <textarea value={note} onChange={(event) => setNote(event.target.value)} placeholder="예: 해외 렉쳐 수동 발급분" />
           </label>
           <button className="primary" onClick={generate} disabled={busy}>코드 생성</button>
-          {message && <p className={message.includes("실패") || message.includes("오류") ? "message error" : "message"}>{message}</p>}
+          {message && <p className={message.includes("실패") || message.includes("오류") || message.includes("필요") ? "message error" : "message"}>{message}</p>}
         </section>
 
         <section className="panel">

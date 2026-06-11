@@ -31,8 +31,14 @@ function hasSupabase() {
   return Boolean(process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY);
 }
 
+function assertLocalStorageAllowed() {
+  if (process.env.NETLIFY || process.env.CONTEXT || process.env.URL) {
+    throw new Error("Netlify에서는 코드 저장을 위해 SUPABASE_URL / SUPABASE_SERVICE_ROLE_KEY 환경변수가 필요합니다.");
+  }
+}
+
 function toRow(license: LicenseCode): SupabaseLicenseRow {
-  return {
+  return compactRow({
     id: license.id,
     code: license.code,
     normalized_code: license.normalizedCode,
@@ -52,7 +58,7 @@ function toRow(license: LicenseCode): SupabaseLicenseRow {
     created_at: license.createdAt,
     activated_at: license.activatedAt,
     last_seen_at: license.lastSeenAt
-  };
+  }) as SupabaseLicenseRow;
 }
 
 function fromRow(row: SupabaseLicenseRow): LicenseCode {
@@ -80,6 +86,10 @@ function fromRow(row: SupabaseLicenseRow): LicenseCode {
 }
 
 async function supabaseFetch(pathname: string, init: RequestInit = {}) {
+  if (!process.env.SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
+    throw new Error("Supabase 환경변수 SUPABASE_URL / SUPABASE_SERVICE_ROLE_KEY가 필요합니다.");
+  }
+
   const url = `${process.env.SUPABASE_URL}/rest/v1/${pathname}`;
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY ?? "";
   const response = await fetch(url, {
@@ -106,6 +116,12 @@ async function supabaseFetch(pathname: string, init: RequestInit = {}) {
   return response.json();
 }
 
+function compactRow<T extends Record<string, unknown>>(row: T) {
+  return Object.fromEntries(
+    Object.entries(row).filter(([, value]) => value !== undefined && value !== null)
+  );
+}
+
 async function readLocal(): Promise<LicenseCode[]> {
   try {
     const text = await fs.readFile(localPath, "utf8");
@@ -126,6 +142,7 @@ export async function listLicenses() {
     return rows.map(fromRow);
   }
 
+  assertLocalStorageAllowed();
   return (await readLocal()).sort((a, b) => b.createdAt.localeCompare(a.createdAt));
 }
 
@@ -138,6 +155,7 @@ export async function insertLicenses(licenses: LicenseCode[]) {
     return rows.map(fromRow);
   }
 
+  assertLocalStorageAllowed();
   const existing = await readLocal();
   const normalized = new Set(existing.map((item) => item.normalizedCode));
   const fresh = licenses.filter((item) => !normalized.has(item.normalizedCode));
@@ -153,6 +171,7 @@ export async function getLicenseByCode(normalizedCode: string) {
     return rows[0] ? fromRow(rows[0]) : null;
   }
 
+  assertLocalStorageAllowed();
   const licenses = await readLocal();
   return licenses.find((item) => item.normalizedCode === normalizedCode) ?? null;
 }
@@ -167,6 +186,7 @@ export async function getLicenseByOrderId(orderId: string) {
     return rows[0] ? fromRow(rows[0]) : null;
   }
 
+  assertLocalStorageAllowed();
   const licenses = await readLocal();
   return licenses.find((item) => item.orderId === orderId) ?? null;
 }
@@ -192,11 +212,12 @@ export async function updateLicense(id: string, changes: Partial<LicenseCode>) {
 
     const rows = (await supabaseFetch(`licenses?id=eq.${encodeURIComponent(id)}`, {
       method: "PATCH",
-      body: JSON.stringify(payload)
+      body: JSON.stringify(compactRow(payload))
     })) as SupabaseLicenseRow[];
     return rows[0] ? fromRow(rows[0]) : null;
   }
 
+  assertLocalStorageAllowed();
   const licenses = await readLocal();
   const next = licenses.map((item) => item.id === id ? { ...item, ...changes } : item);
   await writeLocal(next);
